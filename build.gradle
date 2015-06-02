@@ -1,0 +1,82 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+
+ext.mainClass = 'deltamod.DeltaMod'
+ext.joglVersion = '2.3.1'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.googlecode.matrix-toolkits-java:mtj:0.9.14'
+    compile "org.jogamp.jogl:jogl-all-main:$joglVersion"
+    compile "org.jogamp.gluegen:gluegen-rt-main:$joglVersion"
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+// run configuration
+tasks.withType(JavaExec) {
+	mainClassName = "$mainClass"
+    systemProperty "java.library.path", file("$buildDir/libs")
+}
+
+
+// encoding
+def defaultEncoding = 'UTF-8'
+compileJava {
+    options.encoding = defaultEncoding
+}
+compileTestJava {
+    options.encoding = defaultEncoding
+}
+
+
+jar {
+	def manifestClasspath = " "
+	configurations.compile.files({ dep -> dep.name == 'mtj' }).each { file ->
+        manifestClasspath += file.name + " "
+        copy {
+            from file
+            into "$buildDir/libs/"
+        }
+    }
+	copy { 
+		from configurations.compile
+		into "$buildDir/libs/"
+		include("jogl-all-${joglVersion}.jar", "gluegen-rt-${joglVersion}.jar")
+	}
+    manifestClasspath += "jogl-all-${joglVersion}.jar gluegen-rt-${joglVersion}.jar"
+    manifest {
+        attributes 'Main-Class' : "$mainClass"
+        attributes 'Class-Path': manifestClasspath
+    }
+}
+
+/* please change os definitions to match your system */
+def listNativePaths() {
+	def windows = "windows-amd64" // or "windows-586"
+	def linux = "linux-amd64" // or "linux-586"
+	def macos = "macosx"
+    ArrayList<Object> paths = new ArrayList<>();
+    configurations.compile.each { file ->
+    	if (file.name.contains("natives") ) {
+	    	if (file.name.contains(windows) || file.name.contains(linux) || file.name.contains(macos)) {
+	            copy {
+	            	from file
+	            	into "$buildDir/libs"
+	            }
+	        }
+        } 
+    }
+    return paths
+}
+task natives(type: Copy) {
+    from listNativePaths()
+    into "$buildDir/libs"
+}
+
+build.finalizedBy(natives)

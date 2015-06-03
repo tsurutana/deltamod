@@ -48,6 +48,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JMenuItem menuItemOpen = new JMenuItem(DeltaMod.res.getString("Open"));
 	private JMenuItem menuItemSave = new JMenuItem(DeltaMod.res.getString("Save"));
 	private JMenu menuView = new JMenu(DeltaMod.res.getString("View"));
+	private JMenuItem menuItemViewReset = new JMenuItem(DeltaMod.res.getString("Reset"));
 	public JRadioButtonMenuItem menuItemViewFlat = new JRadioButtonMenuItem( DeltaMod.res.getString("Flat") );
 	public JRadioButtonMenuItem menuItemViewFlatLines = new JRadioButtonMenuItem( DeltaMod.res.getString("FlatLines"), true );
 	public JRadioButtonMenuItem menuItemViewWireframe = new JRadioButtonMenuItem( DeltaMod.res.getString("Wireframe") );
@@ -62,11 +63,13 @@ public class MainFrame extends JFrame implements ActionListener {
 	public JToggleButton buttonOpDivide = new JToggleButton(DeltaMod.imgres.getImage("divide"));
 	public JToggleButton buttonOpOptimize = new JToggleButton(DeltaMod.imgres.getImage("optimize"));
 
-	public MainScreen mainscreen;
+	public MainScreen mainScreen;
 	public OpsPanel opspanel;
 	public StatusBar statusBar;
 	public JSplitPane splitpane;
 
+	private String lastDirectory;
+	
 	public MainFrame() {
 		
 		// load initial model
@@ -86,10 +89,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		statusBar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		getContentPane().add(statusBar, BorderLayout.SOUTH);
 		
-		mainscreen = new MainScreen();
-		mainscreen.setModel(DeltaMod.doc.getModel());
+		mainScreen = new MainScreen();
+		mainScreen.setModel(DeltaMod.doc.getModel());
 
-		splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, opspanel, mainscreen);
+		splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, opspanel, mainScreen);
 		getContentPane().add(splitpane, BorderLayout.CENTER);
 		
 		updateStatusBar();
@@ -128,8 +131,8 @@ public class MainFrame extends JFrame implements ActionListener {
 							OBJStream.load(getClass().getResourceAsStream("/obj/08.obj")));
 				}
 				ModelOps.setConstants(DeltaMod.doc.getModel());
-				mainscreen.setModel(DeltaMod.doc.getModel());
-				mainscreen.repaint();
+				mainScreen.setModel(DeltaMod.doc.getModel());
+				mainScreen.repaint();
 				updateStatusBar();
 			}
 		};
@@ -163,6 +166,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		menuItemSave.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
 
 		menuBar.add(menuView);
+		menuView.add(menuItemViewReset);
+		menuItemViewReset.addActionListener(this);
+		menuView.addSeparator();
 		// rendering
 		ButtonGroup fillGroup = new ButtonGroup();
 		fillGroup.add(menuItemViewFlat);
@@ -233,8 +239,11 @@ public class MainFrame extends JFrame implements ActionListener {
 			open();
 		} else if (e.getSource() == menuItemSave) {
 			save();
-		}
-		mainscreen.repaint();
+		} else if (e.getSource() == menuItemViewReset) {
+			mainScreen.camera.reset();
+			mainScreen.repaint();
+		} 
+		mainScreen.repaint();
 	}
 
 	private void open() {
@@ -242,6 +251,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		fileChooser.addChoosableFileFilter(FileFilterEx.OBJ);
 		fileChooser.addChoosableFileFilter(FileFilterEx.PCODE);
 		fileChooser.setFileFilter(FileFilterEx.OBJ);
+		if (lastDirectory != null)
+			fileChooser.setCurrentDirectory(new File(lastDirectory));
 		//fileChooser.setCurrentDirectory(new File("./enumerate/"));
 		int selected = fileChooser.showOpenDialog(this);
 		if (selected == JFileChooser.APPROVE_OPTION){
@@ -249,13 +260,15 @@ public class MainFrame extends JFrame implements ActionListener {
 			String suffix = getSuffix(file.getName());
 			System.out.println(suffix);
 
+			lastDirectory = file.getPath();
+			
 			// obj
 			if (fileChooser.getFileFilter() == FileFilterEx.OBJ || suffix.compareTo("obj") == 0) {
 				try {
 					DeltaMod.doc.setModel(OBJStream.load(file.getAbsolutePath()));
 					this.setTitle(DeltaMod.res.getString("Title") + ": " + file.getName());
 					ModelOps.setConstants(DeltaMod.doc.getModel());
-					mainscreen.setModel(DeltaMod.doc.getModel());
+					mainScreen.setModel(DeltaMod.doc.getModel());
 					//ModelOps.printDihedralAngles(DeltaMod.doc.getModel());
 					ModelOps.hasDihedralAngle180(DeltaMod.doc.getModel());
 				} catch (Exception e1) {
@@ -269,7 +282,7 @@ public class MainFrame extends JFrame implements ActionListener {
 					int index = Integer.parseInt(input);
 					DeltaMod.doc.setModel(
 							ImporterPlanarGraphCode.load(file.getAbsolutePath(), index-1));
-					mainscreen.setModel(DeltaMod.doc.getModel());
+					mainScreen.setModel(DeltaMod.doc.getModel());
 					this.setTitle(DeltaMod.res.getString("Title") + ": " + file.getName() + " - " + index);
 					Embedding.embed(DeltaMod.doc.getModel());
 					//Embedding.liftupCentrality2(DeltaMod.doc.getModel());
@@ -322,6 +335,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		fileChooser.addChoosableFileFilter(FileFilterEx.GraphML);
 		fileChooser.addChoosableFileFilter(FileFilterEx.M);
 		fileChooser.setFileFilter(FileFilterEx.OBJ);
+		if (lastDirectory != null)
+			fileChooser.setCurrentDirectory(new File(lastDirectory));
 		if (JFileChooser.APPROVE_OPTION == fileChooser.showSaveDialog(this)) {
 			try {
 				String ext = null;

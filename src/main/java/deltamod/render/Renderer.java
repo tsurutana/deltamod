@@ -178,7 +178,7 @@ public class Renderer {
 		gl.glGetDoublev(GL_MODELVIEW_MATRIX, modelview, 0);
 		gl.glGetDoublev(GL_PROJECTION_MATRIX, projection, 0);
 		gl.glGetIntegerv(GL_VIEWPORT, viewport, 0);
-
+		
 		for (Vertex3D v : m.vertices) {
 			glu.gluProject(v.p.x, v.p.y, v.p.z, 
 					modelview, 0, projection, 0, viewport, 0, window, 0); //convert coordinate

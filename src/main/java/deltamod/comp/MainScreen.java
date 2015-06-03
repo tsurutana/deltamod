@@ -14,6 +14,7 @@ import java.awt.geom.Point2D;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import com.jogamp.nativewindow.ScalableSurface;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLJPanel;
@@ -59,6 +60,8 @@ public class MainScreen extends GLJPanel implements GLEventListener, KeyListener
 		menuItemUnselectAll.addActionListener(this);
 		menuItemSetGeometryCenter.addActionListener(this);
 		
+		// disable hi-resolution on retina
+		setSurfaceScale(new float[]{ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE});
 		camera = new Camera();
 		renderer = new Renderer(camera);
 	}
@@ -105,7 +108,7 @@ public class MainScreen extends GLJPanel implements GLEventListener, KeyListener
 	public void mouseExited(MouseEvent e) {}
 
 	public void mousePressed(MouseEvent e) {
-		preMousePosition = getMousePosition(true);
+		preMousePosition.setLocation(e.getX(), e.getY());;
 		for (Face3D f : m.faces) {
 			if (GeomUtil.isFaceIncludesPoint(f, preMousePosition)) {
 				if (f.isSelected)
@@ -125,9 +128,8 @@ public class MainScreen extends GLJPanel implements GLEventListener, KeyListener
 
 	public void mouseDragged(MouseEvent e) {
 
-		mousePosition = getMousePosition(true);
-		if (preMousePosition == null || mousePosition == null) return;
-
+		mousePosition.setLocation(e.getX(), e.getY());
+		
 		if (e.isControlDown())  {
 			camera.rotateX((float) (mousePosition.getY() - preMousePosition.getY()));
 			camera.rotateY((float) (mousePosition.getX() - preMousePosition.getX()));
@@ -142,7 +144,7 @@ public class MainScreen extends GLJPanel implements GLEventListener, KeyListener
 				}
 			}
 		}
-		preMousePosition = mousePosition;
+		preMousePosition.setLocation(mousePosition);
 		repaint();
 	}
 
@@ -222,7 +224,7 @@ public class MainScreen extends GLJPanel implements GLEventListener, KeyListener
 			ModelOps.unselectAllVertices(m);
 			//System.out.println(m.getVolume());
 		} else if (e.getSource() == menuItemSetGeometryCenter) {
-			ModelOps.setOriginToCenterOfMass(m);
+			ModelOps.setOriginToCenterOfGeometry(m);
 		}
 		repaint();
 	}

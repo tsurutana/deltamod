@@ -39,4 +39,9 @@ public class Camera {
 		if (scale < 0.1)
 			scale = 0.1f;
 	}
+	
+	public void reset() {
+		rotX = rotY = traX = traY = 0.0f;
+		scale = 1.0f;
+	}
 }

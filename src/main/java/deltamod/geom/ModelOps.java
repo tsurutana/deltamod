@@ -35,7 +35,7 @@ public class ModelOps {
 		}
 	}
 
-	public static void setOriginToCenterOfMass(Model3D m) {
+	public static void setOriginToCenterOfGeometry(Model3D m) {
 		Vec3D avg = new Vec3D();
 		for (Vertex3D v : m.vertices) {
 			avg.add(v.p);
@@ -44,7 +44,6 @@ public class ModelOps {
 		for (Vertex3D v : m.vertices) {
 			v.p.sub(avg);
 		}
-		System.out.println(1111);
 	}
 
 	public static void printDihedralAngles(Model3D m) {

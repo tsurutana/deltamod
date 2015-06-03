@@ -55,7 +55,7 @@ public class OpsPanelDivide extends AbstractOpsPanel {
 		if (ModelOps.divideFaces(
 				Integer.parseInt(cbxNumOfDivInput.getSelectedItem().toString()), 
 				DeltaMod.doc.getModel()))
-			DeltaMod.mainFrame.mainscreen.camera.scale *= 0.5;
+			DeltaMod.mainFrame.mainScreen.camera.scale *= 0.5;
 		
 	}
 	

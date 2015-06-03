@@ -22,15 +22,10 @@ public class StringResource_ja extends ListResourceBundle {
 		{ "Edit", "編集" }, 
 
 		{ "View", "表示" },
-		{ "Editing", "編集中のモデル" },
-		{ "Optimized", "最適化後のモデル" },
+		{ "Reset", "カメラを初期状態に戻す" },
 		{ "Flat", "面のみ" },
 		{ "FlatLines", "面と枠線" },
 		{ "Wireframe", "ワイヤフレーム" },
-		{ "Mirror", "鏡像を表示" },
-		{ "Leg", "脚部を表示" },
-		{ "Develop", "展開図を表示..."},
-		{ "Opaque", "背景を非透明色で表示" },
 
 		{ "Options", "オプション"},
 		

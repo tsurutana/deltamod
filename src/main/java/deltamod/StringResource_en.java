@@ -22,15 +22,10 @@ public class StringResource_en extends ListResourceBundle {
 		{ "Edit", "Edit" }, 
 
 		{ "View", "View" },
-		{ "Editing", "Editing Model" },
-		{ "Optimized", "Optimized Model" },
+		{ "Reset", "Reset camera position" },
 		{ "Flat", "Flat" },
 		{ "FlatLines", "Flat with Lines" },
 		{ "Wireframe", "Wireframe" },
-		{ "Mirror", "Show Mirror Image" },
-		{ "Leg", "Show Leg of Chair" },
-		{ "Develop", "Show Development Window..."},
-		{ "Opaque", "Background Opaque" },
 
 		{ "Options", "Options"},
 		
@@ -48,7 +43,7 @@ public class StringResource_en extends ListResourceBundle {
 		{ "DialogTitle_FileSave", "Save As"},
 		{ "Warning_SameNameFileExist", "The file already exist. Do you want to replace the existing file?"},
 		{ "Error_FileSaveFailed", "File Saving Failed!"},
-		{ "Manual", "Rotation: Ctrl + Dragging, Move: Shift + Dragging, Perform Operation: Ctrl + X"},
+		{ "Manual", "Rotation: Ctrl + Drag, Move: Shift + Drag, Perform Operation: Ctrl + X"},
 		
 		{ "Connect", "Connect"},
 		{ "AddTetra", "Tetrahedron"},

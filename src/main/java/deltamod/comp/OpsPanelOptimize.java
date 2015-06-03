@@ -69,7 +69,7 @@ public class OpsPanelOptimize extends AbstractOpsPanel {
 		
 		if (m != null) {
 			DeltaMod.doc.setModel(m);
-			DeltaMod.mainFrame.mainscreen.setModel(m);
+			DeltaMod.mainFrame.mainScreen.setModel(m);
 			DeltaMod.mainFrame.updateStatusBar();
 		} else {
 			System.out.println("null");

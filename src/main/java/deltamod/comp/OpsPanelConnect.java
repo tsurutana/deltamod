@@ -136,13 +136,12 @@ public class OpsPanelConnect extends AbstractOpsPanel implements ActionListener 
 		} else if (e.getSource() == rdbAddModel) {
 			buttonLoad.setEnabled(true);
 		} else {
-			ClassLoader loader = getClass().getClassLoader();
 			if (e.getSource() == rdbAddTetrahedron) {
-				subScreen.setModel(OBJStream.load(loader.getResource("obj/01.obj").getPath()));
+				subScreen.setModel(OBJStream.load(getClass().getResourceAsStream("/obj/01.obj")));
 			} else if (e.getSource() == rdbAddOctahedron) {
-				subScreen.setModel(OBJStream.load(loader.getResource("obj/03.obj").getPath()));
+				subScreen.setModel(OBJStream.load(getClass().getResourceAsStream("/obj/03.obj")));
 			} else if (e.getSource() == rdbAddIcosahedron) {
-				subScreen.setModel(OBJStream.load(loader.getResource("obj/08.obj").getPath()));
+				subScreen.setModel(OBJStream.load(getClass().getResourceAsStream("/obj/08.obj")));
 			}
 			buttonLoad.setEnabled(false);
 			

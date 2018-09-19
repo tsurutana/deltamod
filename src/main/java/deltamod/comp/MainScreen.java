@@ -86,13 +86,17 @@ public class MainScreen extends GLJPanel implements GLEventListener, KeyListener
 			for (Face3D f : m.faces) {
 				if (GeomUtil.isFaceIncludesPoint(f, mousePosition)) {
 					f.isSelected = faceSelectionMode;
-					for ( Halfedge3D he : f.halfedges) {
+					f.halfedgeRefersToSelectedVertex = null;
+					if (f.isSelected)
+						f.halfedgeRefersToSelectedVertex = 
+						GeomUtil.getHalfedgeRefersToNearestVertex(mousePosition, f);
+					
+					/*for ( Halfedge3D he : f.halfedges) {
 						he.vertex.isSelected = false;
 					}
 					for (Vertex3D v : m.vertices)
-						v.isSelected = false;
-					Vertex3D c = GeomUtil.getNearestVertex(mousePosition, f);
-					c.isSelected = faceSelectionMode;
+						v.isSelected = false;*/
+					//c.isSelected = faceSelectionMode;
 					break;
 				}
 			}
@@ -140,6 +144,10 @@ public class MainScreen extends GLJPanel implements GLEventListener, KeyListener
 			for (Face3D f : m.faces) {
 				if (GeomUtil.isFaceIncludesPoint(f, mousePosition)) {
 					f.isSelected = faceSelectionMode;
+					if (f.isSelected)
+						f.halfedgeRefersToSelectedVertex = 
+						GeomUtil.getHalfedgeRefersToNearestVertex(mousePosition, f);
+				
 					break;
 				}
 			}
@@ -232,6 +240,7 @@ public class MainScreen extends GLJPanel implements GLEventListener, KeyListener
 	public void setModel(Model3D model) {
 		m = model;
 		renderer.setModel(model);
+		repaint();
 	}
 	
 	public Model3D getModel() {

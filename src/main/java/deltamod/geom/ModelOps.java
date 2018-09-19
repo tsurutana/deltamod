@@ -16,6 +16,7 @@ public class ModelOps {
 	public static void selectAllFaces(Model3D m) {
 		for (Face3D f : m.faces) {
 			f.isSelected = true;
+			f.halfedgeRefersToSelectedVertex = f.halfedges.get(0);
 		}
 	}
 	public static void unselectAllFaces(Model3D m){
@@ -30,9 +31,11 @@ public class ModelOps {
 		}
 	}
 	public static void unselectAllVertices(Model3D m) {
-		for (Vertex3D v : m.vertices) {
+		/*for (Vertex3D v : m.vertices) {
 			v.isSelected = false;
-		}
+		}*/
+		for (Face3D f : m.faces)
+			f.halfedgeRefersToSelectedVertex = null;
 	}
 
 	public static void setOriginToCenterOfGeometry(Model3D m) {
@@ -282,19 +285,15 @@ public class ModelOps {
 				selectedFace1 = f;
 		if (selectedFace0 == null || selectedFace1 == null)
 			return;
-
+		
 		// get landmark vertex
-		for (Halfedge3D he : selectedFace0.halfedges) {
-			if (he.vertex.isSelected)
-				landmark0 = he;
-		}
-		for (Halfedge3D he : selectedFace1.halfedges) {
-			if (he.vertex.isSelected)
-				landmark1 = he;
-		}
+		landmark0 = selectedFace0.halfedgeRefersToSelectedVertex;
+		landmark1 = selectedFace1.halfedgeRefersToSelectedVertex;
+		System.out.println(landmark0);
+		System.out.println(landmark1);
 		if (landmark0 == null || landmark1 == null)
 			return;
-
+		System.out.println("1");
 		// arrange 1st landmarks (by parallel translation)
 		Vec3D sub = GeomUtil.getDir(landmark1.vertex.p, landmark0.vertex.p);
 		for (Vertex3D v : additional.vertices){
@@ -393,14 +392,8 @@ public class ModelOps {
 			return;
 
 		// get landmark vertex
-		for (Halfedge3D he : selectedFace0.halfedges) {
-			if (he.vertex.isSelected)
-				landmark0 = he;
-		}
-		for (Halfedge3D he : selectedFace1.halfedges) {
-			if (he.vertex.isSelected)
-				landmark1 = he;
-		}
+		landmark0 = selectedFace0.halfedgeRefersToSelectedVertex;
+		landmark1 = selectedFace1.halfedgeRefersToSelectedVertex;
 		if (landmark0 == null || landmark1 == null)
 			return;
 
@@ -893,6 +886,7 @@ public class ModelOps {
 
 		System.out.println("complete coloring");
 	}
+	
 	// get unused color by calculating XOR with connecting edges
 	private static boolean recursiveColoring(int n, Model3D m){
 		if (n >= m.edges.size()) {
@@ -915,7 +909,7 @@ public class ModelOps {
 			else
 				c |= 4;
 		}
-		System.out.println(n+ "  "+c);
+		//System.out.println(n+ "  "+c);
 		oldColor = e.color;
 		if (c == 0) {
 			for (int i=1; i<4; i++) {

@@ -4,8 +4,8 @@ import java.awt.Color;
 
 public class Edge3D {
 
-	public Vertex3D sv = null;
-	public Vertex3D ev = null;
+	public Vertex3D v1 = null;
+	public Vertex3D v2 = null;
 	public Halfedge3D[] he = new Halfedge3D[2];
 
 	public int color = 0; // variable for coloring
@@ -14,20 +14,20 @@ public class Edge3D {
 	public int index = 0;
 
 	public Edge3D(Vertex3D sv, Vertex3D ev) {
-		this.sv = sv;
-		this.ev = ev;
+		this.v1 = sv;
+		this.v2 = ev;
 	}
 	public Edge3D(Halfedge3D halfedge) {
-		this.sv = halfedge.vertex;
-		this.ev = halfedge.next.vertex;
+		this.v1 = halfedge.vertex;
+		this.v2 = halfedge.next.vertex;
 		halfedge.edge = this;
 		he[0] = halfedge;
 	}
 
 	public boolean contains(Vertex3D v) {
-		if (sv == v)
+		if (v1 == v)
 			return true;
-		if (ev == v)
+		if (v2 == v)
 			return true;
 		return false;
 	}
@@ -42,7 +42,15 @@ public class Edge3D {
 
 	public double getLength() {
 		//return sv.p.distanceTo(ev.p);
-		return sv.p.squaredDistanceTo(ev.p);
+		return v1.p.squaredDistanceTo(v2.p);
+	}
+	
+	public Vec3D getNormal() {
+		Vec3D norm = new Vec3D(this.he[0].face.n);
+		norm.add(this.he[1].face.n);
+		norm.normalize();
+		norm.negate();
+		return norm;
 	}
 	
 	public double getDihedralAngle() {
@@ -52,8 +60,8 @@ public class Edge3D {
 			return 0;
 		Vec3D c1 = this.he[1].prev.vertex.p;
 		// perpendicular vector from mid-point of common edge
-		Vec3D a0 = new Vec3D(sv.p);
-		a0.add(ev.p);
+		Vec3D a0 = new Vec3D(v1.p);
+		a0.add(v2.p);
 		a0.scale(0.5);
 		Vec3D a1 = new Vec3D(a0);
 		a0.sub(c0);
@@ -62,7 +70,7 @@ public class Edge3D {
 	}
 
 	public boolean equals(Edge3D e) {
-		if (e.contains(sv) && e.contains(ev))
+		if (e.contains(v1) && e.contains(v2))
 			return true;
 		return false;
 	}

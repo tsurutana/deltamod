@@ -26,7 +26,8 @@ public class ImageResource {
 		images.put("divide", img);
 		img = new ImageIcon(loader.getResource("icons/optimize.png"));
 		images.put("optimize", img);
-		
+		img = new ImageIcon(loader.getResource("icons/assemble.png"));
+		images.put("assemble", img);
 	}
 
 	public static ImageResource getInstance() {

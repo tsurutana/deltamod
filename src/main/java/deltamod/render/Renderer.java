@@ -10,7 +10,6 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
-import com.jogamp.opengl.util.gl2.GLUT;
 
 import deltamod.DeltaMod;
 import deltamod.comp.MainFrame;
@@ -18,18 +17,18 @@ import deltamod.geom.Edge3D;
 import deltamod.geom.Face3D;
 import deltamod.geom.Halfedge3D;
 import deltamod.geom.Model3D;
+import deltamod.geom.Vec3D;
 import deltamod.geom.Vertex3D;
 
 public class Renderer {
 
 	private GLUgl2 glu;
-	private GLUT glut;
 	
 	private Camera camera;
 	
 	private float[] light_ambient = { 0.4F, 0.4F, 0.4F, 1.0F };
-	private float[] light_diffuse = { 1.0F, 1.0F, 1.0F, 1.0F };
-	private float[] light_specular = { 0.1F, 0.1F, 0.1F, 1.0F };
+	private float[] light_diffuse = { 0.7F, 0.7F, 0.7F, 1.0F };
+	private float[] light_specular = { 1.0F, 1.0F, 1.0F, 1.0F };
 	
 	private float[] current = new float[16];
 	private double[] modelview = new double[16];
@@ -39,10 +38,14 @@ public class Renderer {
 	private Dimension size;
 	
 	private Model3D m;
+	private Vec3D c0 = new Vec3D();
+	private Vec3D c1 = new Vec3D();
+	private Vec3D c2 = new Vec3D();
+	private Vec3D c01 = new Vec3D();
+	private Vec3D c02 = new Vec3D();
 	
 	public Renderer(Camera c) {
 		glu = new GLUgl2();
-		glut = new GLUT();
 		camera = c;
 	}
 	
@@ -52,7 +55,8 @@ public class Renderer {
 		caps.setNumSamples(2);
 		
 		// background color
-		gl.glClearColor(0.262F, 0.267F, 0.345F, 0.0F);
+		//gl.glClearColor(0.262F, 0.267F, 0.345F, 0.0F);
+		gl.glClearColor(1F, 1F, 1F, 0.0F);
 		
 		gl.glLightfv(GL_LIGHT0, GL_AMBIENT, this.light_ambient, 0);
 		gl.glLightfv(GL_LIGHT0, GL_DIFFUSE, this.light_diffuse, 0);
@@ -103,7 +107,7 @@ public class Renderer {
 		if (!frame.menuItemViewFlat.isSelected())
 			drawWireFrame(gl);
 
-		drawSelectedVertex(gl);
+		//drawSelectedVertex(gl);
 		
 		setScreenPosition(gl);
 		gl.glFlush();
@@ -112,17 +116,42 @@ public class Renderer {
 	private void drawModel(GL2 gl) {
 		for (Face3D face : m.faces) {
 			gl.glNormal3d(face.n.x, face.n.y, face.n.z);
-			if (face.isSelected) {
-				Material.setMaterial(gl, "kupfer");
+			if (face.color == 1) {
+				Material.setMaterial(gl, "red");
+			} else if (face.color == 2) {
+				Material.setMaterial(gl, "green");
+			} else if (face.color == 3) {
+				Material.setMaterial(gl, "blue");
 			} else {
 				Material.setMaterial(gl, "gold");
 			}
-			gl.glBegin(GL_POLYGON);
-			for (Halfedge3D he : face.halfedges) {
-				Vertex3D v = he.vertex;
-				gl.glVertex3d(v.p.x, v.p.y, v.p.z);
+			if (face.isSelected) {
+				setCornerTriangle(face);
+				gl.glBegin(GL_POLYGON);
+				// draw trapezoid
+				Halfedge3D he = face.halfedgeRefersToSelectedVertex;
+				for (int i=0, n=face.halfedges.size()-1; i<n; i++) {
+					he = he.next;
+					gl.glVertex3d(he.vertex.p.x, he.vertex.p.y, he.vertex.p.z);
+				}
+				gl.glVertex3d(c02.x, c02.y, c02.z);
+				gl.glVertex3d(c01.x, c01.y, c01.z);
+				gl.glEnd();
+				Material.setMaterial(gl, "kupfer");
+				gl.glBegin(GL_POLYGON);
+				gl.glVertex3d(c0.x, c0.y, c0.z);
+				gl.glVertex3d(c01.x, c01.y, c01.z);
+				gl.glVertex3d(c02.x, c02.y, c02.z);
+				gl.glEnd();
+			} else {
+				gl.glBegin(GL_POLYGON);
+				for (Halfedge3D he : face.halfedges) {
+					Vertex3D v = he.vertex;
+					gl.glVertex3d(v.p.x, v.p.y, v.p.z);
+				}
+				gl.glEnd();
 			}
-			gl.glEnd();
+			
 		}
 
 		Material.setMaterial(gl, "chrom");
@@ -144,13 +173,13 @@ public class Renderer {
 		gl.glBegin(GL_LINES);
 		for (Edge3D edge : m.edges) {
 			gl.glColor3f(edge.c.getRed(), edge.c.getGreen(), edge.c.getBlue());
-			gl.glVertex3d(edge.sv.p.x, edge.sv.p.y, edge.sv.p.z);
-			gl.glVertex3d(edge.ev.p.x, edge.ev.p.y, edge.ev.p.z);
+			gl.glVertex3d(edge.v1.p.x, edge.v1.p.y, edge.v1.p.z);
+			gl.glVertex3d(edge.v2.p.x, edge.v2.p.y, edge.v2.p.z);
 		}
 		gl.glEnd();
 		gl.glEnable(GL_LIGHTING);
 	}
-	
+	/*
 	private void drawSelectedVertex(GL2 gl) {
 		gl.glEnable(GL_BLEND);
 		Material.setMaterial(gl, "bronze");
@@ -162,7 +191,7 @@ public class Renderer {
 			}
 		}
 		gl.glDisable(GL_BLEND);
-	}
+	}*/
 	
 	public void reshape(GL2 gl, int width, int height) {
 		gl.glViewport(0, 0, width, height);		
@@ -194,6 +223,23 @@ public class Renderer {
 		}
 		// sort the faces
 		Collections.sort(m.faces, new FaceDepthComparator());
+	}
+	
+	private void setCornerTriangle(Face3D f) {
+		Halfedge3D landmark = f.halfedgeRefersToSelectedVertex;
+		if (landmark == null) return;
+		
+		c0.set(landmark.vertex.p);
+		c1.set(landmark.next.vertex.p);
+		c2.set(landmark.prev.vertex.p);
+		c01.set(c1);
+		c01.sub(c0);
+		c01.scale(0.3);
+		c01.add(c0);
+		c02.set(c2);
+		c02.sub(c0);
+		c02.scale(0.3);
+		c02.add(c0);
 	}
 	
 	public void setModel(Model3D model) {

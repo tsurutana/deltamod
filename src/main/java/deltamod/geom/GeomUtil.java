@@ -27,6 +27,7 @@ public class GeomUtil {
 	public static void setDir(Halfedge3D he, Vec3D vec) {
 		setDir(he.vertex.p, he.next.vertex.p, vec);
 	}
+	// a to b
 	public static void setDir(Vec3D a, Vec3D b, Vec3D vec) {
 		vec.set(b.x - a.x, b.y - a.y, b.z - a.z);
 	}
@@ -134,6 +135,21 @@ public class GeomUtil {
 		else
 			return null;
 		 */
+	}
+	
+	// get halfedge refers to nearest vertex to p among the face f 
+	public static Halfedge3D getHalfedgeRefersToNearestVertex (Point2D p, Face3D f) {
+		double min = Double.MAX_VALUE;
+		Halfedge3D near = null;
+		for (int i=0,n=f.halfedges.size(); i<n; i++) {
+			Vertex3D v = f.halfedges.get(i).vertex;
+			double dist = p.distance(v.screen.x, v.screen.y);
+			if (dist < min) {
+				min = dist;
+				near = f.halfedges.get(i);
+			}
+		}
+		return near;
 	}
 
 }

@@ -29,13 +29,17 @@ public class Material {
 
 	// create materials. run once on start up.
 	public static void generateMaterials() {
-		createMaterial("emerald", 0.0215F, 0.1745F, 0.0215F, 0.07568f, 0.61424F, 0.07568F, 0.633F, 0.727811F, 0.633F, 76.8F);
+		createMaterial("emerald", 0.0215F, 0.1745F, 0.0215F, 0.07568F, 0.61424F, 0.07568F, 0.633F, 0.727811F, 0.633F, 76.8F);
 		createMaterial("silver", 0.19F, 0.19F, 0.19F, 0.51F, 0.51F, 0.51F, 0.51F, 0.51F, 0.51F, 51.2F);
 		createMaterial("gold", 0.55F, 0.52F, 0.36F, 0.35F, 0.31F, 0.09F, 0.80F, 0.72F, 0.21F, 83.1F);
 		createMaterial("chrom", 0.25F, 0.25F, 0.25F, 0.40F, 0.40F, 0.40F, 0.77F, 0.77F, 0.77F, 76.8F);
 		createMaterial("bronze", 0.21F, 0.13F, 0.05F, 0.71F, 0.43F, 0.18F, 0.39F, 0.27F, 0.17F, 25.6F);
 		createMaterial("kupfer", 0.19F, 0.07F, 0.02F, 0.70F, 0.27F, 0.08F, 0.26F, 0.14F, 0.09F, 12.8F);
 		
+		createMaterial("red", 0.0F, 0.0F, 0.0F, 0.5F, 0.0F, 0.0F, 0.1F, 0.1F, 0.1F, 1F);
+		createMaterial("green", 0.0F, 0.0F, 0.0F, 0.1F, 0.35F, 0.1F, 0.1F, 0.1F, 0.1F, 1F);
+		createMaterial("blue", 0.0F, 0.0F, 0.0F, 0.5F, 0.5F, 0.0F, 0.1F, 0.1F, 0.1F, 1F);
+		/*
 		for (int i=0; i<100; i++) {
 			final float d0 = (float) Math.random();
 			final float d1 = (float) Math.random();
@@ -50,7 +54,7 @@ public class Material {
 			final float s1 = (float) (a1 * 0.8);
 			final float s2 = (float) (a2 * 0.8);
 			createMaterial("randmtl" + i, a0, a1, a2, d0, d1, d2, s0, s1, s2, 30F);
-		}
+		}*/
 	}
 
 	public static void createMaterial(String name, float ambR, float ambG, float ambB, 
@@ -108,6 +112,6 @@ public class Material {
 		}
 		bw.close();
 		
-		System.out.println("complete materials");
+		System.out.println("materials are exported.");
 	}
 }

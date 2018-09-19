@@ -8,6 +8,7 @@ public class FileFilterEx extends FileFilter {
 	private String msg;
 
 	public static FileFilterEx OBJ = new FileFilterEx(new String[]{"." + "obj"}, "(*.obj) OBJ File");
+	public static FileFilterEx MOBJ = new FileFilterEx(new String[]{"." + "obj"}, "(*.obj) Modular OBJ+MTL File");
 	public static FileFilterEx SVG = new FileFilterEx(new String[]{"." + "svg"}, "(*.svg) SVG File");
 	public static FileFilterEx GraphML = new FileFilterEx(new String[]{"." + "graphml"}, "(*.graphml) GraphML File");
 	public static FileFilterEx PCODE = new FileFilterEx(new String[]{"." + "pcode"}, "(*.pcode) Planar Code File");

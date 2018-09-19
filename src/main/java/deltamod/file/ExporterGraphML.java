@@ -129,8 +129,8 @@ public static void exportVertexGraph(Model3D m, String filepath) throws Exceptio
 		//output edge-relations as edges
 		count = 0;
 		for (Edge3D e : m.edges) {
-			int source = e.sv.index;
-			int target = e.ev.index;
+			int source = e.v1.index;
+			int target = e.v2.index;
 			writeEdge(bw, source, target, count++);
 		}
 		

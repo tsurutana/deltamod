@@ -44,6 +44,12 @@ public class Model3D {
 			for (int i=0, n=f.halfedges.size(); i<n; i++)
 				f_copy.halfedges.add( new Halfedge3D(f_copy, vertices.get(f.halfedges.get(i).vertex.index)) );
 			f_copy.setHalfedgeLoopRelations();
+			if (f.halfedgeRefersToSelectedVertex != null) {
+				int selected = f.halfedgeRefersToSelectedVertex.vertex.index;
+				for (Halfedge3D he : f_copy.halfedges)
+					if (he.vertex.index == selected)
+						f_copy.halfedgeRefersToSelectedVertex = he;
+			}
 			faces.add(f_copy);
 		}
 		makeEdges();
@@ -76,7 +82,7 @@ public class Model3D {
 	public double getMaximumError() {
 		double max_error = 0.0;
 		for (Edge3D e : edges) {
-			double d = GeomUtil.distance(e.sv.p, e.ev.p) - length;
+			double d = GeomUtil.distance(e.v1.p, e.v2.p) - length;
 			d = (d < 0) ? -d : d;
 			if (d > max_error)
 				max_error = d;
@@ -167,16 +173,16 @@ public class Model3D {
 	
 	public String getGeometricInformation() {
 		String str = "";
-		str += "Face : " + faces.size() + 
-		"  Edge : " + edges.size() + 
-		"  Vertex : " + vertices.size();
+		str += "F : " + faces.size() + 
+		"  E : " + edges.size() + 
+		"  V : " + vertices.size();
 		return str;
 	}
 	public String getDeltahedronInformation() {
 		if (isTriangleMesh()) {
-			return "Mesh: triangle, Error: " + getMaximumError();
+			return "Mesh: Triangle, Error: " + getMaximumError();
 		}
-		return "Mesh: polygonal, Error: " + getMaximumError();
+		return "Mesh: Polygonal, Error: " + getMaximumError();
 	}
 	
 	public void write() {

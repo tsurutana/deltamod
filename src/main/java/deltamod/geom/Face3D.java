@@ -11,6 +11,7 @@ public class Face3D {
 	public int color = 0; // variable for coloring
 	
 	public boolean isSelected = false;
+	public Halfedge3D halfedgeRefersToSelectedVertex = null;
 	
 	public Face3D(){
 		

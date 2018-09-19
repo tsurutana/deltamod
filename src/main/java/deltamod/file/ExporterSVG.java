@@ -11,6 +11,13 @@ import deltamod.geom.*;
 
 public class ExporterSVG {
 
+	
+	private static Vec3D c0 = new Vec3D();
+	private static Vec3D c1 = new Vec3D();
+	private static Vec3D c2 = new Vec3D();
+	private static Vec3D c01 = new Vec3D();
+	private static Vec3D c02 = new Vec3D();
+	
 	public static void export(Model3D m, String filepath) throws Exception{
 		int width = 600, height = 600;
 
@@ -36,8 +43,8 @@ public class ExporterSVG {
 			Face3D f = m.faces.get(i);
 			
 			// do not output hidden faces
-			if (f.n.z < 0)
-				continue;
+			//if (f.n.z < 0)
+			//	continue;
 			
 			Halfedge3D he = f.halfedges.get(0);
 			bw.write("<path d=\"M ");
@@ -50,14 +57,21 @@ public class ExporterSVG {
 			bw.write(" Z\" fill=\"");
 			
 			// face color
-			
 			Color c;
 			float v;
 			//float v = (float)(tmpn.z);
 			v = (f.n.z > 0) ? (float)f.n.z : (float)-f.n.z;
 			// brighter
 			v += (1.0 - v) * 0.5;
-			c = Color.getHSBColor(0.58f, 0.08f, v); // blue
+			
+			if (f.color == 1)
+				c = Color.getHSBColor(0.1f, 0.4f, v); // red
+			else if (f.color == 2)
+				c = Color.getHSBColor(0.35f, 0.4f, v); // green
+			else if (f.color == 3)
+				c = Color.getHSBColor(0.2f, 0.4f, v); // yellow
+			else
+				c = Color.getHSBColor(0.58f, 0.08f, v); // blue
 			
 			bw.write(String.format("#%06x", (c.getRed()<<16)|(c.getGreen()<<8)|c.getBlue()));
 			bw.write("\" stroke=\"black\" stroke-width=\"1\" stroke-linejoin=\"round\"");
@@ -70,5 +84,22 @@ public class ExporterSVG {
 		bw.write(" </g>\n"); // 
 		bw.write("</svg>\n"); //
 		bw.close();
+	}
+	
+	private static void setCornerTriangle(Face3D f) {
+		Halfedge3D landmark = f.halfedgeRefersToSelectedVertex;
+		if (landmark == null) return;
+		
+		c0.set(landmark.vertex.p);
+		c1.set(landmark.next.vertex.p);
+		c2.set(landmark.prev.vertex.p);
+		c01.set(c1);
+		c01.sub(c0);
+		c01.scale(0.3);
+		c01.add(c0);
+		c02.set(c2);
+		c02.sub(c0);
+		c02.scale(0.3);
+		c02.add(c0);
 	}
 }

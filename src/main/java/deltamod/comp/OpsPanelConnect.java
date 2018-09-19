@@ -53,7 +53,7 @@ public class OpsPanelConnect extends AbstractOpsPanel implements ActionListener 
 		buttonLoad.setEnabled(false);
 		
 		subScreen = new MainScreen();
-		subScreen.setModel(OBJStream.load(getClass().getResourceAsStream("/obj/01.obj")));
+		subScreen.setModel(OBJStream.load(getClass().getResourceAsStream("/obj/04.obj")));
 		
 		// create group layout
 		JPanel panel = new JPanel();
@@ -153,11 +153,20 @@ public class OpsPanelConnect extends AbstractOpsPanel implements ActionListener 
 	public void perform() {
 		Model3D m = DeltaMod.doc.getModel();
 		if (rdbAddTetrahedron.isSelected()) {
-			ModelOps.addTetrahedron(m);
+			if (chkboxSubtract.isSelected())
+				ModelOps.subModel(m, subScreen.getModel());
+			else
+				ModelOps.addTetrahedron(m);
 		} else if (rdbAddOctahedron.isSelected()) {
-			ModelOps.addOctahedron(m);
+			if (chkboxSubtract.isSelected())
+				ModelOps.subModel(m, subScreen.getModel());
+			else
+				ModelOps.addOctahedron(m);
 		} else if (rdbAddIcosahedron.isSelected()) {
-			ModelOps.addIcosahedron(m);
+			if (chkboxSubtract.isSelected())
+				ModelOps.subModel(m, subScreen.getModel());
+			else
+				ModelOps.addIcosahedron(m);
 		} else if (rdbAddModel.isSelected()) {
 			if (chkboxSubtract.isSelected())
 				ModelOps.subModel(m, subScreen.getModel());

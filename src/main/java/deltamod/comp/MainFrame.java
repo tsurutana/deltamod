@@ -1,15 +1,17 @@
 package deltamod.comp;
 
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -37,14 +39,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	private JMenu menuFile = new JMenu(DeltaMod.res.getString("File"));
 	private JMenu menuNew = new JMenu(DeltaMod.res.getString("New"));
-	private JMenuItem menuItemNewC4 = new JMenuItem(DeltaMod.res.getString("C4"));
-	private JMenuItem menuItemNewC6 = new JMenuItem(DeltaMod.res.getString("C6"));
-	private JMenuItem menuItemNewC8 = new JMenuItem(DeltaMod.res.getString("C8"));
-	private JMenuItem menuItemNewC10 = new JMenuItem(DeltaMod.res.getString("C10"));
-	private JMenuItem menuItemNewC12 = new JMenuItem(DeltaMod.res.getString("C12"));
-	private JMenuItem menuItemNewC14 = new JMenuItem(DeltaMod.res.getString("C14"));
-	private JMenuItem menuItemNewC16 = new JMenuItem(DeltaMod.res.getString("C16"));
-	private JMenuItem menuItemNewC20 = new JMenuItem(DeltaMod.res.getString("C20"));
+	private JMenuItem[] menuItemDeltahedra = new JMenuItem[8];
 	private JMenuItem menuItemOpen = new JMenuItem(DeltaMod.res.getString("Open"));
 	private JMenuItem menuItemSave = new JMenuItem(DeltaMod.res.getString("Save"));
 	private JMenu menuView = new JMenu(DeltaMod.res.getString("View"));
@@ -52,20 +47,12 @@ public class MainFrame extends JFrame implements ActionListener {
 	public JRadioButtonMenuItem menuItemViewFlat = new JRadioButtonMenuItem( DeltaMod.res.getString("Flat") );
 	public JRadioButtonMenuItem menuItemViewFlatLines = new JRadioButtonMenuItem( DeltaMod.res.getString("FlatLines"), true );
 	public JRadioButtonMenuItem menuItemViewWireframe = new JRadioButtonMenuItem( DeltaMod.res.getString("Wireframe") );
-
-	private JToolBar toolbar = new JToolBar();
 	
-	public JToggleButton[] buttonOps = new JToggleButton[6];
-	public JToggleButton buttonOpConnect = new JToggleButton(DeltaMod.imgres.getImage("add"), true);
-	public JToggleButton buttonOpElongate = new JToggleButton(DeltaMod.imgres.getImage("elongate"));
-	public JToggleButton buttonOpTuck = new JToggleButton(DeltaMod.imgres.getImage("tuck"));
-	public JToggleButton buttonOpFill = new JToggleButton(DeltaMod.imgres.getImage("fill"));
-	public JToggleButton buttonOpDivide = new JToggleButton(DeltaMod.imgres.getImage("divide"));
-	public JToggleButton buttonOpOptimize = new JToggleButton(DeltaMod.imgres.getImage("optimize"));
-
+	private JToolBar toolbar = new JToolBar();
+	public JToggleButton[] oprButtons = new JToggleButton[7];
 	public MainScreen mainScreen;
 	public OpsPanel opspanel;
-	public StatusBar statusBar;
+	private StatusBar statusBar;
 	public JSplitPane splitpane;
 
 	private String lastDirectory;
@@ -102,37 +89,24 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		JMenuBar menuBar = new JMenuBar();
 		
+		menuItemDeltahedra[0] = new JMenuItem(DeltaMod.res.getString("C4"));
+		menuItemDeltahedra[1] = new JMenuItem(DeltaMod.res.getString("C6"));
+		menuItemDeltahedra[2] = new JMenuItem(DeltaMod.res.getString("C8"));
+		menuItemDeltahedra[3] = new JMenuItem(DeltaMod.res.getString("C10"));
+		menuItemDeltahedra[4] = new JMenuItem(DeltaMod.res.getString("C12"));
+		menuItemDeltahedra[5] = new JMenuItem(DeltaMod.res.getString("C14"));
+		menuItemDeltahedra[6] = new JMenuItem(DeltaMod.res.getString("C16"));
+		menuItemDeltahedra[7] = new JMenuItem(DeltaMod.res.getString("C20"));
+		
 		ActionListener initAction = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == menuItemNewC4) {
-					DeltaMod.doc.setModel(
-							OBJStream.load(getClass().getResourceAsStream("/obj/01.obj")));
-							//OBJStream.load(getClass().getResourceAsStream("resources/obj/01.obj")));
-				} else if (e.getSource() == menuItemNewC6) {
-					DeltaMod.doc.setModel(
-							OBJStream.load(getClass().getResourceAsStream("/obj/02.obj")));
-				} else if (e.getSource() == menuItemNewC8) {
-					DeltaMod.doc.setModel(
-							OBJStream.load(getClass().getResourceAsStream("/obj/03.obj")));
-				} else if (e.getSource() == menuItemNewC10) {
-					DeltaMod.doc.setModel(
-							OBJStream.load(getClass().getResourceAsStream("/obj/04.obj")));
-				} else if (e.getSource() == menuItemNewC12) {
-					DeltaMod.doc.setModel(
-							OBJStream.load(getClass().getResourceAsStream("/obj/05.obj")));
-				} else if (e.getSource() == menuItemNewC14) {
-					DeltaMod.doc.setModel(
-							OBJStream.load(getClass().getResourceAsStream("/obj/06.obj")));
-				} else if (e.getSource() == menuItemNewC16) {
-					DeltaMod.doc.setModel(
-							OBJStream.load(getClass().getResourceAsStream("/obj/07.obj")));
-				} else if (e.getSource() == menuItemNewC20) {
-					DeltaMod.doc.setModel(
-							OBJStream.load(getClass().getResourceAsStream("/obj/08.obj")));
+				for (int i=0; i<menuItemDeltahedra.length; i++) {
+					if (e.getSource() == menuItemDeltahedra[i]) {
+						DeltaMod.doc.setModel(OBJStream.load(getClass().getResourceAsStream("/obj/0"+ (i+1) +".obj")));
+					}
 				}
 				ModelOps.setConstants(DeltaMod.doc.getModel());
 				mainScreen.setModel(DeltaMod.doc.getModel());
-				mainScreen.repaint();
 				updateStatusBar();
 			}
 		};
@@ -140,23 +114,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		menuBar.add(menuFile);
 		menuFile.setMnemonic('f');
 		menuFile.add(menuNew);
-		menuNew.add(menuItemNewC4);
-		menuItemNewC4.addActionListener(initAction);
-		menuNew.add(menuItemNewC6);
-		menuItemNewC6.addActionListener(initAction);
-		menuNew.add(menuItemNewC8);
-		menuItemNewC8.addActionListener(initAction);
-		menuNew.add(menuItemNewC10);
-		menuItemNewC10.addActionListener(initAction);
-		menuNew.add(menuItemNewC12);
-		menuItemNewC12.addActionListener(initAction);
-		menuNew.add(menuItemNewC14);
-		menuItemNewC14.addActionListener(initAction);
-		menuNew.add(menuItemNewC16);
-		menuItemNewC16.addActionListener(initAction);
-		menuNew.add(menuItemNewC20);
-		menuItemNewC20.addActionListener(initAction);
-		
+		for (int i=0; i<menuItemDeltahedra.length; i++) {
+			menuNew.add(menuItemDeltahedra[i]);
+			menuItemDeltahedra[i].addActionListener(initAction);
+		}
 		
 		menuFile.add(menuItemOpen);
 		menuItemOpen.addActionListener(this);
@@ -185,51 +146,45 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 	
 	public void initToolBar() {
-		ActionListener opsAction = new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				if (buttonOpConnect.isSelected()) {
-					opspanel.show("Connect");
-				} else if (buttonOpElongate.isSelected()) {
-					opspanel.show("Elongate");
-				} else if (buttonOpTuck.isSelected()) {
-					opspanel.show("Tuck");
-				} else if (buttonOpDivide.isSelected()) {
-					opspanel.show("Divide");
-				} else if (buttonOpFill.isSelected()) {
-					opspanel.show("Fill");
-				} else if (buttonOpOptimize.isSelected()) {
-					opspanel.show("Optimize");
+				
+		ItemListener listener = new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JToggleButton tb = (JToggleButton) e.getSource();
+				if (tb.isSelected()) {
+					if (tb == oprButtons[0])
+						opspanel.show("Connect");
+					else if (tb == oprButtons[1])
+						opspanel.show("Elongate");
+					else if (tb == oprButtons[2])
+						opspanel.show("Tuck");
+					else if (tb == oprButtons[3])
+						opspanel.show("Fill");
+					else if (tb == oprButtons[4])
+						opspanel.show("Divide");
+					else if (tb == oprButtons[5])
+						opspanel.show("Optimize");
+					else if (tb == oprButtons[6])
+						opspanel.show("Assemble");
 				}
 			}
 		};
+		
+		oprButtons[0] = new JToggleButton(DeltaMod.imgres.getImage("add"), true);
+		oprButtons[1] = new JToggleButton(DeltaMod.imgres.getImage("elongate"));
+		oprButtons[2] = new JToggleButton(DeltaMod.imgres.getImage("tuck"));
+		oprButtons[3] = new JToggleButton(DeltaMod.imgres.getImage("fill"));
+		oprButtons[4] = new JToggleButton(DeltaMod.imgres.getImage("divide"));
+		oprButtons[5] = new JToggleButton(DeltaMod.imgres.getImage("optimize"));
+		oprButtons[6] = new JToggleButton(DeltaMod.imgres.getImage("assemble"));
 
-		ButtonGroup opsGroup = new ButtonGroup();
-		opsGroup.add(buttonOpConnect);
-		toolbar.add(buttonOpConnect);
-		buttonOpConnect.addActionListener(opsAction);
-		opsGroup.add(buttonOpElongate);
-		toolbar.add(buttonOpElongate);
-		buttonOpElongate.addActionListener(opsAction);
-		opsGroup.add(buttonOpTuck);
-		toolbar.add(buttonOpTuck);
-		buttonOpTuck.addActionListener(opsAction);
-		opsGroup.add(buttonOpFill);
-		toolbar.add(buttonOpFill);
-		buttonOpFill.addActionListener(opsAction);
-		opsGroup.add(buttonOpDivide);
-		toolbar.add(buttonOpDivide);
-		buttonOpDivide.addActionListener(opsAction);
-		opsGroup.add(buttonOpOptimize);
-		toolbar.add(buttonOpOptimize);
-		buttonOpOptimize.addActionListener(opsAction);
-		toolbar.addSeparator();
-
-		buttonOps[0] = buttonOpConnect;
-		buttonOps[1] = buttonOpElongate;
-		buttonOps[2] = buttonOpTuck;
-		buttonOps[3] = buttonOpFill;
-		buttonOps[4] = buttonOpDivide;
-		buttonOps[5] = buttonOpOptimize;
+		ButtonGroup oprButtonGroup = new ButtonGroup();
+		for (int i=0; i<oprButtons.length; i++) {
+			oprButtonGroup.add(oprButtons[i]);
+			toolbar.add(oprButtons[i]);
+			//buttonOps[i].addChangeListener(opsChange);
+			oprButtons[i].addItemListener(listener);
+		}
 		
 		getContentPane().add(toolbar, BorderLayout.NORTH);
 	}
@@ -248,12 +203,13 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	private void open() {
 		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setAcceptAllFileFilterUsed(false);
 		fileChooser.addChoosableFileFilter(FileFilterEx.OBJ);
 		fileChooser.addChoosableFileFilter(FileFilterEx.PCODE);
 		fileChooser.setFileFilter(FileFilterEx.OBJ);
 		if (lastDirectory != null)
 			fileChooser.setCurrentDirectory(new File(lastDirectory));
-		//fileChooser.setCurrentDirectory(new File("./enumerate/"));
+		
 		int selected = fileChooser.showOpenDialog(this);
 		if (selected == JFileChooser.APPROVE_OPTION){
 			File file = fileChooser.getSelectedFile();
@@ -329,7 +285,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	private void save() {
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File("./enumerate/"));
+		JCheckBox cbxMaterial = new JCheckBox("Export Material");
+		fileChooser.setAccessory(cbxMaterial);
 		fileChooser.addChoosableFileFilter(FileFilterEx.OBJ);
 		fileChooser.addChoosableFileFilter(FileFilterEx.SVG);
 		fileChooser.addChoosableFileFilter(FileFilterEx.GraphML);
@@ -370,7 +327,10 @@ public class MainFrame extends JFrame implements ActionListener {
 				}
 
 				if (ext.compareTo("obj") == 0)
-					OBJStream.save(filePath, DeltaMod.doc.getModel());
+					if (cbxMaterial.isSelected())
+						OBJStream.saveWithMaterial(filePath, DeltaMod.doc.getModel());
+					else
+						OBJStream.save(filePath, DeltaMod.doc.getModel());
 				else if (ext.compareTo("svg") == 0)
 					ExporterSVG.export(DeltaMod.doc.getModel(), filePath);
 				else if (ext.compareTo("graphml") == 0)
@@ -386,6 +346,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	public void updateStatusBar() {
 		statusBar.setMessage(1, DeltaMod.doc.getModel().getGeometricInformation());
 		statusBar.setMessage(2, DeltaMod.doc.getModel().getDeltahedronInformation());
+		mainScreen.repaint();
 	}
 	
 	private static String getSuffix(String fileName) {

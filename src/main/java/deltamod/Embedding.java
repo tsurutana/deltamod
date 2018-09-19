@@ -1,6 +1,13 @@
-package deltamod.geom;
+package deltamod;
 
 import java.util.ArrayList;
+
+import deltamod.geom.Edge3D;
+import deltamod.geom.Face3D;
+import deltamod.geom.Halfedge3D;
+import deltamod.geom.Model3D;
+import deltamod.geom.Vec3D;
+import deltamod.geom.Vertex3D;
 
 public class Embedding {
 

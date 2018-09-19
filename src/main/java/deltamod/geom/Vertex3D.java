@@ -16,7 +16,7 @@ public class Vertex3D {
 	public int index = 0;
 	public Vec3D screen = new Vec3D(); // screen coordinate
 
-	public boolean isSelected = false;
+	//public boolean isSelected = false;
 	public boolean checkFlg = false;
 	
 	public Vertex3D(Vec3D v) {
@@ -27,7 +27,7 @@ public class Vertex3D {
 		n = new Vec3D(v.n);
 		screen = new Vec3D(v.screen);
 		index = v.index;
-		isSelected = v.isSelected;
+		//isSelected = v.isSelected;
 		checkFlg = v.checkFlg;
 	}
 	public Vertex3D(double x,double y,double z) {

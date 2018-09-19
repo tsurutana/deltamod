@@ -15,6 +15,7 @@ public class OpsPanel extends JPanel {
 
 	JPanel center = new JPanel();
 	public CardLayout layout;
+	public String current = "";
 
 	public OpsPanel() {
 
@@ -28,7 +29,8 @@ public class OpsPanel extends JPanel {
 		center.add(new OpsPanelTuck(), "Tuck");
 		center.add(new OpsPanelFill(), "Fill");
 		center.add(new OpsPanelDivide(), "Divide");
-		center.add(new OpsPanelOptimize(), "Optimize");
+		center.add(new OpsPanelRegularize(), "Optimize");
+		center.add(new OpsPanelAssemble(), "Assemble");
 		
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
@@ -36,7 +38,19 @@ public class OpsPanel extends JPanel {
 	}
 
 	public void show(String name) {
+		// move from assemble panel
+		if (current == "Assemble" && name != "Assemble") {
+			DeltaMod.doc.restore();
+			DeltaMod.mainFrame.mainScreen.setModel(DeltaMod.doc.getModel());
+		}
 		layout.show(center, name);
+		current = name;
+		Component[] c = center.getComponents();
+		for (int i=0, n=c.length; i<n; i++) {
+			if (c[i].isVisible()) {
+				((AbstractOpsPanel) c[i]).panelShown();
+			}
+		}
 		//this.setTitle(DeltaMod.res.getString(name) + " " + DeltaMod.res.getString("Operation"));
 	}
 
@@ -45,13 +59,14 @@ public class OpsPanel extends JPanel {
 		Component[] c = center.getComponents();
 		for (int i=0, n=c.length; i<n; i++) {
 			if (c[i].isVisible()) {
+				DeltaMod.doc.save();
 				AbstractOpsPanel op = (AbstractOpsPanel) c[i];
 				op.perform();
 				Model3D m = DeltaMod.doc.getModel();
 				//m.removeOverlappedFaces();
 				m.removeIsolatedVertices();
-				DeltaMod.mainFrame.statusBar.setMessage(1, m.getGeometricInformation());
-				DeltaMod.mainFrame.statusBar.setMessage(2, m.getDeltahedronInformation());
+				DeltaMod.mainFrame.updateStatusBar();
+				DeltaMod.mainFrame.mainScreen.setModel(m);
 				break;
 			}
 		}

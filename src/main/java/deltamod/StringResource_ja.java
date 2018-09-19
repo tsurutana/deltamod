@@ -10,7 +10,7 @@ import java.util.ListResourceBundle;
 
 public class StringResource_ja extends ListResourceBundle {
 	static final Object[][] strings = { 
-		{ "Title", "DeltaMod 1.0" }, 
+		{ "Title", "DeltaMod 1.1" }, 
 		{ "File", "ファイル" }, 
 		{ "New", "新規作成" }, 
 		{ "Open", "開く..." }, 
@@ -36,6 +36,12 @@ public class StringResource_ja extends ListResourceBundle {
 		{ "OptimizeDescription", "<html>最適化処理は辺の長さを一定にします.<br>" +
 		"これにより, 入力された三角形メッシュを持つ多面体は, デルタ多面体に変形されます.<br>"},
 		{ "LoadReference", "参照モデルの読み込み"},
+		
+		{ "Optimization", "最適化"},
+		{ "Optimize", "最適化"},
+		{ "AcceptableError", "許容誤差"},
+		{ "NumOfIteration", "反復回数"},
+		{ "AssemblyDescription", "<html>ユニット折り紙で組み上げたモデルを表示します.<br>"},
 		
 		{ "Help", "ヘルプ" }, 
 		{ "Version", "バージョン情報"},
